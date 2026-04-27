@@ -1,8 +1,11 @@
+import { AirportDashboard } from "./pages/DashboardPage";
 
 function App() {
 
   return (
-    <p>Hello World</p>
+    <div className="p-6">
+      <AirportDashboard />
+    </div>
   );
 }
 
