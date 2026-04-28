@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { AirportDashboard } from "./pages/DashboardPage";
 import { AirportLayout } from "./pages/AirportLayout";
 import { FlightsPage } from "./pages/FlightsPage";
+import { RunwaySlotsPage } from "./pages/RunwaySlotsPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
       {
         path: 'flights',
         Component: FlightsPage,
+      },
+      {
+        path: 'runway-slots',
+        Component: RunwaySlotsPage,
       }
     ],
   },
