@@ -1,12 +1,6 @@
-import { AirportDashboard } from "./pages/DashboardPage";
+import { RouterProvider } from "react-router";
+import { router } from "./routes";
 
-function App() {
-
-  return (
-    <div className="p-6">
-      <AirportDashboard />
-    </div>
-  );
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;

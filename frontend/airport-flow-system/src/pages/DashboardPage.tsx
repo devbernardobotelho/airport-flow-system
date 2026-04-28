@@ -1,5 +1,5 @@
-import { DashboardMetrics } from "../components/DashboardMetrics";
-import { FlightsList } from "../components/FlightsList";
+import { DashboardMetrics } from "../components/dashboard/DashboardMetrics";
+import { FlightsList } from "../components/dashboard/FlightsList";
 
 export function AirportDashboard() {
     return (
