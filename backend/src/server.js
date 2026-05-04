@@ -18,6 +18,14 @@ fs.readdirSync(controllerDir).forEach((file) => {
     }
 });
 
+const modelsDir = path.join(__dirname, 'models');
+
+fs.readdirSync(modelsDir).forEach((file) => {
+    if (file.endsWith('.js')) {
+        require(path.join(modelsDir, file));
+    }
+});
+
 sequelize.sync().then(() => {
     app.listen(3000, () => console.log('Servidor rodando e sincronizado!'));
 });

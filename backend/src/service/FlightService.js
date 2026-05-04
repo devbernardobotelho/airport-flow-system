@@ -1,6 +1,6 @@
 const Flight = require('../models/FlightModel');
 const Airline = require('../models/AirlineModel');
-const { FlightStatus } = require('../config/enums');
+const { FlightStatus } = require('../models/enums/Enums.js');
 
 const FlightService = {
 

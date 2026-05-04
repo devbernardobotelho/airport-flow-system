@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const { Priority, FlightStatus } = require('../config/enums');
+const { Priority, FlightStatus } = require('./enums/Enums.js');
 
 const Flight = sequelize.define('Flight', {
     id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },

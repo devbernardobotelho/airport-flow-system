@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const { StandStatus, StandType } = require('../config/enums');
+const { StandStatus, StandType } = require('./enums/Enums.js');
 
 const Stand = sequelize.define('Stand', {
     id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
