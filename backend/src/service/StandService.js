@@ -3,6 +3,24 @@ const Flight = require('../models/FlightModel');
 const sequelize = require('../config/database');
 
 const StandService = {
+
+    async findFreeStand() {
+        return await Stand.findAll({
+            where: {
+                status: 'FREE'
+            }
+        });
+    },
+
+    async findFreeByType(type) {
+        return await Stand.findOne({
+            where: {
+                type,
+                status: 'FREE'
+            }
+        });
+    },
+
     async reserve(standId, flightId) {
         const flight = await Flight.findByPk(flightId);
         const stand = await Stand.findByPk(standId);

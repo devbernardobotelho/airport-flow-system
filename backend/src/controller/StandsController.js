@@ -4,16 +4,27 @@ const StandService = require('../service/StandService');
 
 router.get('/', async (req, res) => {
     try {
-        const stands = await StandService.findFreeStand(req.query.type); 
+        const stands = await StandService.findFreeStand(req.query.type);
         res.status(200).json(stands);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-router.post('/:id/reserve', async (req, res) => {
+router.post('/reserve', async (req, res) => {
     try {
-        await StandService.reserve(req.params.id, req.body.flightId);
-        res.status(201).json({ message: "Stand reservado com sucesso" });
-    } catch (err) { res.status(400).json({ error: err.message }); }
+        const { type, flightId } = req.body;
+
+        const stand = await StandService.findFreeByType(type);
+
+        if (!stand) {
+            return res.status(404).json({ error: "Nenhum stand livre desse tipo" });
+        }
+
+        const updated = await StandService.reserve(stand.id, flightId);
+
+        res.json(updated);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
 
 // POST /stands/:id/reallocate - Realoca um voo
