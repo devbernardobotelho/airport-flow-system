@@ -5,7 +5,7 @@ const AirlineService = require('../service/AirlineService');
 router.get('/', async (req, res) => {
     try {
         const airline = await AirlineService.getAll();
-        res.status(201).json(airline);
+        res.status(200).json(airline);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 

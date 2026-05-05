@@ -7,7 +7,7 @@ const SlotService = require('../service/SlotService');
 router.post('/', async (req, res) => {
     try {
         const result = await LandingService.requestLanding(req.body.flightId);
-        res.json(result);
+        res.status(201).json(result);
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 router.post('/slots', async (req, res) => {
     try {
         const result = await SlotService.reserveSlot(req.body.slotId, req.body.flightId);
-        res.json({ message: "Slot reservado", result });
+        res.status(201).json({ message: "Slot reservado", result });
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 

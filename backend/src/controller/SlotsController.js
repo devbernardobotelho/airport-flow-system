@@ -5,7 +5,7 @@ const SlotService = require('../service/SlotService');
 router.get('/', async (req, res) => {
     try {
         const slots = await SlotService.getAll();
-        res.json(slots);
+        res.status(200).json(slots);
     } catch (err) { 
         res.status(500).json({ error: err.message }); 
     }
