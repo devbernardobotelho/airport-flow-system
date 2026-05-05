@@ -16,6 +16,16 @@ router.post('/', async (req, res) => {
     } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
+router.patch('/:id', async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        await AirlineService.update(id, req.body);
+        res.status(200).send();
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
 router.delete('/:id', async (req, res) => {
     try {
         await AirlineService.delete(req.params.id);

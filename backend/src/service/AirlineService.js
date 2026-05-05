@@ -11,14 +11,28 @@ const AirlineService = {
         return await Airline.findAll();
     },
 
+    async update(id, data) {
+        const airline = await Airline.findByPk(id);
+
+        if (!airline) {
+            throw new Error("Airline não encontrada");
+        }
+
+        airline.name = data.name;
+
+        await airline.save();
+
+        return airline;
+    },
+
     async delete(id) {
         // Regra de Negócio: Não pode excluir se tiver voos vinculados
         const flightCount = await Flight.count({ where: { airlineId: id } });
-        
+
         if (flightCount > 0) {
             throw new Error("Não é possível excluir Airline com voos vinculados.");
         }
-        
+
         return await Airline.destroy({ where: { id } });
     }
 };
