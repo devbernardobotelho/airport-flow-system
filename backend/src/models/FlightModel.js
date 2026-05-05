@@ -3,6 +3,10 @@ const sequelize = require('../config/database');
 const { Priority, FlightStatus } = require('./enums/Enums.js');
 
 const Flight = sequelize.define('Flight', {
+    airlineId: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
     id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     priority: { type: DataTypes.ENUM(Object.values(Priority)), defaultValue: Priority.NORMAL },
     status: { type: DataTypes.ENUM(Object.values(FlightStatus)), defaultValue: FlightStatus.WAITING },
