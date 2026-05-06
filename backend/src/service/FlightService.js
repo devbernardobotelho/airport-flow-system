@@ -4,19 +4,49 @@ const RunwaySlot = require('../models/RunwaySlotModel');
 const Stand = require('../models/StandModel');
 const { FlightStatus } = require('../models/enums/Enums.js');
 
+function generateFlightNumber(code) {
+    const random = Math.floor(1000 + Math.random() * 9000);
+    return `${code}${random}`;
+};
+
+
 const FlightService = {
 
     async fetchAllFlights() {
-        return await Flight.findAll();
+        return await Flight.findAll({
+            include: [
+                {
+                    model: Airline,
+                    as: "Airline",
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: RunwaySlot,
+                    as: "runwaySlot",
+                    required: false
+                },
+                {
+                    model: Stand,
+                    as: "stand",
+                    required: false
+                }
+            ]
+        });
     },
 
     async scheduleNewFlight(data) {
         const airline = await Airline.findByPk(data.airlineId);
 
-        if (!airline) throw new Error("Airline inválida ou não encontrada.");
-        if (data.status === 'LANDED') throw new Error("Voo não pode ser criado como LANDED.");
+        if (!airline) throw new Error("Airline inválida.");
 
-        return await Flight.create({ ...data, status: FlightStatus.WAITING });
+        const flightNumber = generateFlightNumber(airline.code);
+
+        return await Flight.create({
+            airlineId: data.airlineId,
+            priority: data.priority,
+            status: FlightStatus.WAITING,
+            flightNumber
+        });
     },
 
     async updateFlightStatus(id, newStatus) {
@@ -50,7 +80,7 @@ const FlightService = {
 
         flight.status = newStatus;
         return await flight.save();
-    }
+    },
 };
 
 module.exports = FlightService;

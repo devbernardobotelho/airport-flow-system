@@ -3,8 +3,11 @@ const sequelize = require('./config/database');
 const fs = require('fs');
 const path = require('path');
 
+const cors = require('cors');
+
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const controllerDir = path.join(__dirname, 'controller');
 
