@@ -26,6 +26,12 @@ fs.readdirSync(modelsDir).forEach((file) => {
     }
 });
 
-sequelize.sync().then(() => {
-    app.listen(3000, () => console.log('Servidor rodando e sincronizado!'));
+const seedStands = require('./seed/seed.js');
+
+sequelize.sync().then(async () => {
+    await seedStands();
+
+    app.listen(3000, () => {
+        console.log('Servidor rodando e sincronizado!');
+    });
 });

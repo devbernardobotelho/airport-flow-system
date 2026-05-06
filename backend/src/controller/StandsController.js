@@ -4,7 +4,7 @@ const StandService = require('../service/StandService');
 
 router.get('/', async (req, res) => {
     try {
-        const stands = await StandService.findFreeStand(req.query.type);
+        const stands = await StandService.findAllStands();
         res.status(200).json(stands);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -13,7 +13,7 @@ router.post('/reserve', async (req, res) => {
     try {
         const { type, flightId } = req.body;
 
-        const stand = await StandService.findFreeByType(type);
+        const stand = await StandService.findFreeStand(type);
 
         if (!stand) {
             return res.status(404).json({ error: "Nenhum stand livre desse tipo" });
