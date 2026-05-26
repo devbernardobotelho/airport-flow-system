@@ -13,14 +13,5 @@ const RunwaySlot = sequelize.define('RunwaySlot', {
     endTime: { type: DataTypes.DATE, allowNull: false }
 });
 
-RunwaySlot.afterUpdate(async (slot, options) => {
-    if (slot.flightId === null) {
-        // Se o slot foi liberado (flightId virou null), limpa o voo
-        await Flight.update({ slotId: null }, {
-            where: { slotId: slot.id },
-            transaction: options.transaction
-        });
-    }
-});
 
 module.exports = RunwaySlot;

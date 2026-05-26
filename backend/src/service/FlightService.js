@@ -2,6 +2,7 @@ const Flight = require('../models/FlightModel');
 const Airline = require('../models/AirlineModel');
 const RunwaySlot = require('../models/RunwaySlotModel');
 const Stand = require('../models/StandModel');
+const sequelize = require('../config/database');
 const { FlightStatus } = require('../models/enums/Enums.js');
 
 function generateFlightNumber(code) {
@@ -78,8 +79,16 @@ const FlightService = {
             throw new Error("Voo precisa de stand reservado para pousar.");
         }
 
-        flight.status = newStatus;
-        return await flight.save();
+        await sequelize.transaction(async (t) => {
+            if (newStatus === FlightStatus.LANDED && slot) {
+                await slot.update({ flightId: null }, { transaction: t });
+            }
+
+            flight.status = newStatus;
+            await flight.save({ transaction: t });
+        });
+
+        return flight;
     },
 };
 

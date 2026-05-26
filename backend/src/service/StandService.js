@@ -4,19 +4,20 @@ const sequelize = require('../config/database');
 
 const StandService = {
 
-    async findFreeStand() {
-        return await Stand.findAll({
+    async findFreeStand(type) {
+        return await Stand.findOne({
             where: {
+                type,
                 status: 'FREE'
             }
         });
     },
 
-      async findAllStands() {
+    async findAllStands() {
         return await Stand.findAll();
     },
 
-    async reserve(type, flightId) {
+    async reserve(standId, flightId) {
         const flight = await Flight.findByPk(flightId);
 
         if (!flight) throw new Error("Flight não encontrado");
@@ -33,11 +34,10 @@ const StandService = {
             throw new Error("Voo já possui um stand.");
         }
 
-        const stand = await Stand.findOne({
-            where: { type, status: 'FREE' }
-        });
+        const stand = await Stand.findByPk(standId);
 
-        if (!stand) throw new Error("Nenhum stand livre desse tipo");
+        if (!stand) throw new Error("Stand não encontrado");
+        if (stand.status !== 'FREE') throw new Error("Stand não está livre.");
 
         await sequelize.transaction(async (t) => {
             await stand.update(

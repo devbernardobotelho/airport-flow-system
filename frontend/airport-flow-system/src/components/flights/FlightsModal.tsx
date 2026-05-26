@@ -60,7 +60,6 @@ export function FlightsModal({ open, onClose }: ModalProps) {
                     Criar Voo
                 </h2>
 
-                {/* FORM */}
                 <form onSubmit={handleSubmit} className="space-y-4">
 
                     <div>

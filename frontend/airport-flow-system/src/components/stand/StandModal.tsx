@@ -5,7 +5,7 @@ import type { Flight } from "../../types";
 export interface StandModal {
     open: boolean,
     onClose: () => void,
-    flight: Flight,
+    flight: Flight | undefined,
     onOpenStatusModal: (flight: Flight) => void,
 }
 export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandModal) {

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Search, AlertTriangle } from "lucide-react";
 import api from "../../api";
+import { SlotModal } from "../runway/SlotModal";
 import { StandModal } from "../stand/StandModal";
 import { StatusModal } from "./StatusModal";
 import type { Flight } from "../../types";
 
 export function FlightsManagement() {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [flights, setFlights] = useState<Flight[]>([]);
 
@@ -59,7 +62,6 @@ export function FlightsManagement() {
     return (
         <div className="bg-card border rounded-xl">
 
-            {/* filtros */}
             <div className="p-6 border-b space-y-4">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
@@ -77,7 +79,6 @@ export function FlightsManagement() {
                 </span>
             </div>
 
-            {/* lista */}
             <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {filteredFlights.map((flight, index) => {
                     const isEmergency = flight.priority === "EMERGENCY";
@@ -92,7 +93,6 @@ export function FlightsManagement() {
                             className={`border rounded-xl p-5 ${isEmergency ? "border-red-300 bg-red-50" : ""
                                 }`}
                         >
-                            {/* HEADER */}
                             <div className="flex justify-between mb-3">
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -125,12 +125,15 @@ export function FlightsManagement() {
                                 )}
                             </div>
 
-                            {/* BOTÕES */}
                             <div className="flex gap-2 mt-4">
                                 <button
                                     onClick={() => {
                                         setSelectedFlight(flight);
-                                        setSlotModal(true);
+                                        if (flight.runwaySlot) {
+                                            setSlotModal(true);
+                                        } else {
+                                            navigate("/runway-slots");
+                                        }
                                     }}
                                     className="flex-1 p-2 bg-gray-100 rounded text-xs hover:bg-gray-200"
                                 >
@@ -142,7 +145,9 @@ export function FlightsManagement() {
                                         setSelectedFlight(flight);
                                         setStandModal(true);
                                     }}
-                                    className="flex-1 p-2 bg-gray-100 rounded text-xs hover:bg-gray-200"
+                                    disabled={flight.status !== "APPROACHING"}
+                                    title={flight.status !== "APPROACHING" ? "Somente voos em Approaching podem reservar stand" : undefined}
+                                    className={`flex-1 p-2 rounded text-xs ${flight.status !== "APPROACHING" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"}`}
                                 >
                                     Stand
                                 </button>
@@ -163,6 +168,16 @@ export function FlightsManagement() {
                     );
                 })}
             </div>
+
+            <SlotModal
+                open={slotModal}
+                onClose={() => {
+                    setSlotModal(false);
+                    loadFlights();
+                }}
+                flightId={selectedFlight?.id || ""}
+                assignedSlot={selectedFlight?.runwaySlot}
+            />
 
             <StandModal
                 open={standModal}
