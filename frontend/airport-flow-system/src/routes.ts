@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, redirect } from "react-router-dom";
+
 import { AirportDashboard } from "./pages/DashboardPage";
 import { AirportLayout } from "./pages/AirportLayout";
 import { FlightsPage } from "./pages/FlightsPage";
@@ -7,31 +8,34 @@ import { StandsManagement } from "./components/stand/StandsManagement";
 import { AirlinesPage } from "./pages/AirlinesPage";
 
 export const router = createBrowserRouter([
-    {
-        path: "/",
-        Component: AirportLayout,
-        children: [
-            {
-                index: true,
-                Component: AirportDashboard,
-            },
-            {
-                path: 'flights',
-                Component: FlightsPage,
-            },
-            {
-                path: 'runway-slots',
-                Component: RunwaySlotsPage,
-            },
-            {
-                path: 'stands',
-                Component: StandsManagement,
-            },
-            {
-                path: 'airlines',
-                Component: AirlinesPage,
-            }
-
-        ],
-    },
+  {
+    path: "/",
+    Component: AirportLayout,
+    children: [
+      {
+        index: true,
+        Component: AirportDashboard,
+      },
+      {
+        path: "flights",
+        Component: FlightsPage,
+      },
+      {
+        path: "runway-slots",
+        Component: RunwaySlotsPage,
+      },
+      {
+        path: "stands",
+        Component: StandsManagement,
+      },
+      {
+        path: "airlines",
+        Component: AirlinesPage,
+      },
+    ],
+  },
+  {
+    path: "*",
+    loader: () => redirect("/"),
+  },
 ]);

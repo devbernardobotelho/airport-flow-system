@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Plane, Clock, MapPin, Building2} from "lucide-react";
 
 export function AirportSidebar() {
