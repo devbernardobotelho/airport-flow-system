@@ -52,6 +52,7 @@ export function FlightsManagement() {
                 className: "bg-green-100 text-green-700"
             }
         };
+
         return configs[status];
     };
 
@@ -61,10 +62,10 @@ export function FlightsManagement() {
 
     return (
         <div className="bg-card border rounded-xl">
-
             <div className="p-6 border-b space-y-4">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
+
                     <input
                         type="text"
                         placeholder="Buscar voo..."
@@ -90,8 +91,9 @@ export function FlightsManagement() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className={`border rounded-xl p-5 ${isEmergency ? "border-red-300 bg-red-50" : ""
-                                }`}
+                            className={`border rounded-xl p-5 ${
+                                isEmergency ? "border-red-300 bg-red-50" : ""
+                            }`}
                         >
                             <div className="flex justify-between mb-3">
                                 <div>
@@ -99,6 +101,7 @@ export function FlightsManagement() {
                                         {isEmergency && (
                                             <AlertTriangle className="w-5 h-5 text-red-600" />
                                         )}
+
                                         <h3 className="font-semibold">
                                             {flight.flightNumber}
                                         </h3>
@@ -110,7 +113,6 @@ export function FlightsManagement() {
                                 </div>
                             </div>
 
-                            {/* ✅ STATUS CHIPS */}
                             <div className="flex gap-2 mb-3">
                                 <span
                                     className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}
@@ -129,6 +131,7 @@ export function FlightsManagement() {
                                 <button
                                     onClick={() => {
                                         setSelectedFlight(flight);
+
                                         if (flight.runwaySlot) {
                                             setSlotModal(true);
                                         } else {
@@ -145,9 +148,17 @@ export function FlightsManagement() {
                                         setSelectedFlight(flight);
                                         setStandModal(true);
                                     }}
-                                    disabled={flight.status !== "APPROACHING"}
-                                    title={flight.status !== "APPROACHING" ? "Somente voos em Approaching podem reservar stand" : undefined}
-                                    className={`flex-1 p-2 rounded text-xs ${flight.status !== "APPROACHING" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"}`}
+                                    disabled={!flight.runwaySlot}
+                                    title={
+                                        !flight.runwaySlot
+                                            ? "Necessário atribuir um slot antes de reservar stand"
+                                            : undefined
+                                    }
+                                    className={`flex-1 p-2 rounded text-xs ${
+                                        !flight.runwaySlot
+                                            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                            : "bg-gray-100 hover:bg-gray-200"
+                                    }`}
                                 >
                                     Stand
                                 </button>
@@ -159,9 +170,29 @@ export function FlightsManagement() {
                                         setSelectedFlight(flight);
                                         setStatusModal(true);
                                     }}
-                                    disabled={!flight.stand}
-                                    title={!flight.stand ? "É necessário reservar um stand antes de alterar o status" : undefined}
-                                    className={`flex-1 p-2 rounded text-xs ${!flight.stand ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`}
+                                    disabled={
+                                        !flight.runwaySlot ||
+                                        (
+                                            flight.status === "APPROACHING" &&
+                                            !flight.stand
+                                        )
+                                    }
+                                    title={
+                                        !flight.runwaySlot
+                                            ? "Atribua um slot antes de alterar o status"
+                                            : flight.status === "APPROACHING" && !flight.stand
+                                                ? "Reserve um stand antes de pousar o voo"
+                                                : undefined
+                                    }
+                                    className={`flex-1 p-2 rounded text-xs ${
+                                        !flight.runwaySlot ||
+                                        (
+                                            flight.status === "APPROACHING" &&
+                                            !flight.stand
+                                        )
+                                            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                    }`}
                                 >
                                     Alterar Status
                                 </button>

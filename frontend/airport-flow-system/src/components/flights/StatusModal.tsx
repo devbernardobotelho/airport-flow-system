@@ -34,6 +34,7 @@ export function StatusModal({ open, onClose, flight }: StatusModal) {
                 status: selectedStatus,
             });
 
+            toast.showToast("Status atualizado com sucesso.", 'success');
             onClose();
         } catch (err) {
             console.error(err);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
+import { useToast } from "../ui/useToast";
 import type { RunwaySlot } from "../../types";
 
 export interface SlotModal {
@@ -11,6 +12,7 @@ export interface SlotModal {
 export function SlotModal({ open, onClose, flightId, assignedSlot }: SlotModal) {
 const [slots, setSlots] = useState<RunwaySlot[]>([]);
 const [selected, setSelected] = useState<string>("");
+const toastHook = useToast();
 
     useEffect(() => {
         if (open && !assignedSlot) {
@@ -30,6 +32,8 @@ const [selected, setSelected] = useState<string>("");
             slotId: selected,
             flightId
         });
+
+        toastHook.showToast("Slot reservado com sucesso.", 'success');
 
         onClose();
     };

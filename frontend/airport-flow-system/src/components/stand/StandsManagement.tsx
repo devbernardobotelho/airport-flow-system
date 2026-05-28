@@ -113,6 +113,7 @@ export function StandsManagement() {
 
         try {
             await api.post(`/stands/${selectedStand.id}/release`);
+            toast.showToast("Stand liberado com sucesso.", 'success');
             await loadStands();
         } catch (err) {
             console.error(err);
@@ -135,6 +136,7 @@ export function StandsManagement() {
                 newStandId: selectedTargetStandId,
                 flightId: selectedStand.flightId,
             });
+            toast.showToast("Voo realocado com sucesso.", 'success');
             await loadStands();
         } catch (err) {
             console.error(err);
@@ -156,6 +158,7 @@ export function StandsManagement() {
             await api.post(`/stands/${selectedStand.id}/reserve`, {
                 flightId: selectedFlightId,
             });
+            toast.showToast("Stand reservado com sucesso.", 'success');
             await Promise.all([loadStands(), loadFlights()]);
         } catch (err: unknown) {
             console.error(err);

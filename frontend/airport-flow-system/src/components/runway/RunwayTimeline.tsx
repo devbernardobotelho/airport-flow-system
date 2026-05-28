@@ -130,6 +130,7 @@ export function RunwayTimeline() {
                 slotId: selectedSlot.id,
                 flightId: selectedFlightId,
             });
+            toast.showToast("Slot reservado com sucesso.", 'success');
             setReserveModalOpen(false);
             setSelectedSlot(null);
             setSelectedFlightId("");

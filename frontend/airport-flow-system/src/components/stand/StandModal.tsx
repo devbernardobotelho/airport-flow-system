@@ -17,7 +17,7 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
 
     if (!open || !flight) return null;
 
-    const isApproaching = flight.status === "APPROACHING";
+    const hasRunwaySlot = !!flight.runwaySlot;
 
     const handleReserve = async () => {
         try {
@@ -28,6 +28,7 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
                 flightId: flight.id
             });
 
+            toast.showToast("Stand reservado com sucesso.", 'success');
             onClose();
         } catch (err: unknown) {
             console.error(err);
@@ -49,7 +50,7 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
             >
                 <h2 className="text-lg font-semibold">Atribuir Stand</h2>
 
-                {!isApproaching ? (
+                {!hasRunwaySlot ? (
                     <>
                         <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg text-sm">
                             Voo está em <b>{flight.status}</b><br />
@@ -61,9 +62,9 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
                                 onClose();
                                 onOpenStatusModal(flight);
                             }}
-                            disabled={!flight.stand}
-                            title={!flight.stand ? "Necessário reservar um stand antes de alterar o status" : undefined}
-                            className={`w-full px-4 py-2 rounded-lg ${!flight.stand ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-yellow-500 text-white hover:bg-yellow-600"}`}
+                            disabled={!flight.runwaySlot}
+                            title={!flight.runwaySlot ? "Necessário atribuir um slot de pista antes de alterar o status" : undefined}
+                            className={`w-full px-4 py-2 rounded-lg ${!flight.runwaySlot ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-yellow-500 text-white hover:bg-yellow-600"}`}
                         >
                             Mudar status do voo
                         </button>
