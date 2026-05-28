@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { LayoutDashboard, Plane, Clock, MapPin, Building2, Settings } from "lucide-react";
+import { LayoutDashboard, Plane, Clock, MapPin, Building2} from "lucide-react";
 
 export function AirportSidebar() {
   const navItems = [
@@ -8,7 +8,6 @@ export function AirportSidebar() {
     { path: "/runway-slots", icon: Clock, label: "Runway Slots" },
     { path: "/stands", icon: MapPin, label: "Stands" },
     { path: "/airlines", icon: Building2, label: "Airlines" },
-    { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
   return (

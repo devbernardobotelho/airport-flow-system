@@ -27,7 +27,24 @@ router.post('/reserve', async (req, res) => {
     }
 });
 
-// POST /stands/:id/reallocate - Realoca um voo
+router.post('/:id/reserve', async (req, res) => {
+    try {
+        const { flightId } = req.body;
+        const updated = await StandService.reserve(req.params.id, flightId);
+        res.status(201).json(updated);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+router.post('/:id/release', async (req, res) => {
+    try {
+        await StandService.release(req.params.id);
+        res.status(200).json({ message: "Stand liberado" });
+    } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+
 router.post('/:id/reallocate', async (req, res) => {
     try {
         await StandService.reallocate(req.params.id, req.body.newStandId, req.body.flightId);

@@ -1,47 +1,82 @@
+import { useEffect, useState } from "react";
 import { Clock, Plane, MapPin, AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
+import api from "../../api";
+import type { Flight } from "../../types";
+
+interface StandMetric {
+  id: string;
+  type: "GATE" | "REMOTE";
+  status: "FREE" | "OCCUPIED";
+  flightId: string | null;
+}
+
+const statusInfo = [
+  {
+    label: "Em Espera",
+    status: "WAITING",
+    icon: Clock,
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-100 dark:bg-yellow-900/20",
+  },
+  {
+    label: "Em Aproximação",
+    status: "APPROACHING",
+    icon: Plane,
+    color: "text-blue-600",
+    bgColor: "bg-blue-100 dark:bg-blue-900/20",
+  },
+  {
+    label: "Pousados",
+    status: "LANDED",
+    icon: Plane,
+    color: "text-green-600",
+    bgColor: "bg-green-100 dark:bg-green-900/20",
+  },
+  {
+    label: "Emergências",
+    status: "EMERGENCY",
+    icon: AlertTriangle,
+    color: "text-red-600",
+    bgColor: "bg-red-100 dark:bg-red-900/20",
+  },
+];
 
 export function DashboardMetrics() {
-  const metrics = [
-    {
-      label: "Em Espera",
-      value: "12",
-      icon: Clock,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-100 dark:bg-yellow-900/20",
-      status: "WAITING",
-    },
-    {
-      label: "Em Aproximação",
-      value: "8",
-      icon: Plane,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100 dark:bg-blue-900/20",
-      status: "APPROACHING",
-    },
-    {
-      label: "Pousados",
-      value: "45",
-      icon: Plane,
-      color: "text-green-600",
-      bgColor: "bg-green-100 dark:bg-green-900/20",
-      status: "LANDED",
-    },
-    {
-      label: "Emergências",
-      value: "2",
-      icon: AlertTriangle,
-      color: "text-red-600",
-      bgColor: "bg-red-100 dark:bg-red-900/20",
-      status: "EMERGENCY",
-    },
-  ];
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [stands, setStands] = useState<StandMetric[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [flightsRes, standsRes] = await Promise.all([
+          api.get<Flight[]>('/flights'),
+          api.get<StandMetric[]>('/stands'),
+        ]);
+
+        setFlights(flightsRes.data);
+        setStands(standsRes.data);
+      } catch (error) {
+        console.error('Erro ao carregar métricas do dashboard', error);
+      }
+    };
+
+    void loadData();
+  }, []);
 
   const standMetrics = {
-    available: 18,
-    occupied: 32,
-    total: 50,
+    available: stands.filter((stand) => stand.status === 'FREE').length,
+    occupied: stands.filter((stand) => stand.status === 'OCCUPIED').length,
+    total: stands.length,
   };
+
+  const metrics = statusInfo.map((item) => ({
+    ...item,
+    value:
+      item.status === 'EMERGENCY'
+        ? flights.filter((flight) => flight.priority === 'EMERGENCY').length
+        : flights.filter((flight) => flight.status === item.status).length,
+  }));
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

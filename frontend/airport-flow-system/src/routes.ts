@@ -5,7 +5,6 @@ import { FlightsPage } from "./pages/FlightsPage";
 import { RunwaySlotsPage } from "./pages/RunwaySlotsPage";
 import { StandsManagement } from "./components/stand/StandsManagement";
 import { AirlinesPage } from "./pages/AirlinesPage";
-import { SettingsPage } from "./pages/SettingsPage";
 
 export const router = createBrowserRouter([
     {
@@ -31,10 +30,6 @@ export const router = createBrowserRouter([
             {
                 path: 'airlines',
                 Component: AirlinesPage,
-            },
-            {
-                path: 'settings',
-                Component: SettingsPage
             }
 
         ],

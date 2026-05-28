@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { Plane, Plus, AlertTriangle } from "lucide-react";
 import api from "../../api";
+import { useToast } from "../ui/useToast";
 import type { RunwaySlot, Flight } from "../../types";
 
 const runways = ["RW09", "RW27", "RW18", "RW36"];
@@ -28,13 +29,15 @@ export function RunwayTimeline() {
     const [selectedFlightId, setSelectedFlightId] = useState("");
     const [reserveModalOpen, setReserveModalOpen] = useState(false);
     const [reserving, setReserving] = useState(false);
+    const toast = useToast();
 
-    const loadSlots = () => {
-        setLoading(true);
-        api.get("/slots")
-            .then((res) => setSlots(res.data))
-            .catch((err) => console.error(err))
-            .finally(() => setLoading(false));
+    const loadSlots = async () => {
+        try {
+            const res = await api.get("/slots");
+            setSlots(res.data);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const loadFlights = async () => {
@@ -47,8 +50,29 @@ export function RunwayTimeline() {
     };
 
     useEffect(() => {
-        loadSlots();
-        loadFlights();
+        const loadInitialData = async () => {
+            try {
+                const res = await api.get("/slots");
+                setSlots(res.data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void loadInitialData();
+
+        const loadInitialFlights = async () => {
+            try {
+                const res = await api.get("/flights");
+                setFlights(res.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        void loadInitialFlights();
     }, []);
 
     const timeSlots = useMemo(() => generateTimeSlots(), []);
@@ -113,7 +137,7 @@ export function RunwayTimeline() {
             await loadFlights();
         } catch (err) {
             console.error(err);
-            alert("Erro ao reservar slot");
+            toast.showToast("Erro ao reservar slot", 'error');
         } finally {
             setReserving(false);
         }

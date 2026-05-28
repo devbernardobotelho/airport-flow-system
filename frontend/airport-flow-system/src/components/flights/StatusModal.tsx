@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import api from "../../api";
+import { useToast } from "../ui/useToast";
 import type { Flight } from "../../types";
 
 export interface StatusModal {
@@ -8,8 +9,8 @@ export interface StatusModal {
     flight: Flight | undefined;
 }
 export function StatusModal({ open, onClose, flight }: StatusModal) {
-    const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
+    const toast = useToast();
 
     const getAllowedStatuses = () => {
         if (!flight) return [];
@@ -18,18 +19,10 @@ export function StatusModal({ open, onClose, flight }: StatusModal) {
         return [];
     };
 
-    useEffect(() => {
-        if (flight) {
-            const allowed = getAllowedStatuses();
-            if (allowed.length > 0) {
-                setStatus(allowed[0]);
-            }
-        }
-    }, [flight]);
+    const allowedStatuses = getAllowedStatuses();
+    const selectedStatus = allowedStatuses[0] ?? "";
 
     if (!open || !flight) return null;
-
-    const allowedStatuses = getAllowedStatuses();
 
     const hasSlot = !!flight.runwaySlot;
 
@@ -38,13 +31,13 @@ export function StatusModal({ open, onClose, flight }: StatusModal) {
             setLoading(true);
 
             await api.patch(`/flights/${flight.id}/status`, {
-                status
+                status: selectedStatus,
             });
 
             onClose();
         } catch (err) {
-            alert("Erro ao atualizar status");
             console.error(err);
+            toast.showToast("Erro ao atualizar status", 'error');
         } finally {
             setLoading(false);
         }
@@ -67,7 +60,7 @@ export function StatusModal({ open, onClose, flight }: StatusModal) {
                     <div className="text-sm text-gray-500">
                         Nenhuma transição disponível.
                     </div>
-                ) : status === "APPROACHING" && !hasSlot ? (
+                ) : selectedStatus === "APPROACHING" && !hasSlot ? (
                     <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm">
                         Este voo não possui slot.<br />
                         Atribua um slot antes de mudar o status.
@@ -75,7 +68,7 @@ export function StatusModal({ open, onClose, flight }: StatusModal) {
                 ) : (
                     <>
                         <div className="bg-blue-100 text-blue-800 p-3 rounded-lg text-sm">
-                            Próximo status: <b>{status}</b>
+                            Próximo status: <b>{selectedStatus}</b>
                         </div>
 
                         <div className="flex justify-end gap-2">

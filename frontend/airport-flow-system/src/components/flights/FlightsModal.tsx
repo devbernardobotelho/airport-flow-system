@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
+import { useToast } from "../ui/useToast";
 
 interface Airline {
     id: string;
@@ -16,6 +17,7 @@ export function FlightsModal({ open, onClose }: ModalProps) {
     const [airlineId, setAirlineId] = useState("");
     const [priority, setPriority] = useState("NORMAL");
     const [loading, setLoading] = useState(false);
+    const toast = useToast();
 
     useEffect(() => {
         if (open) {
@@ -43,7 +45,7 @@ export function FlightsModal({ open, onClose }: ModalProps) {
             onClose();
         } catch (err) {
             console.error(err);
-            alert("Erro ao criar voo");
+            toast.showToast("Erro ao criar voo", 'error');
         } finally {
             setLoading(false);
         }

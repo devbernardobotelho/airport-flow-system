@@ -80,8 +80,14 @@ const FlightService = {
         }
 
         await sequelize.transaction(async (t) => {
-            if (newStatus === FlightStatus.LANDED && slot) {
-                await slot.update({ flightId: null }, { transaction: t });
+            if (newStatus === FlightStatus.LANDED) {
+                if (slot) {
+                    await slot.update({ flightId: null }, { transaction: t });
+                }
+
+                if (stand) {
+                    await stand.update({ status: 'FREE', flightId: null }, { transaction: t });
+                }
             }
 
             flight.status = newStatus;

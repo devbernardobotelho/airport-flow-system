@@ -1,5 +1,7 @@
 import { useState } from "react";
+import axios from "axios";
 import api from "../../api";
+import { useToast } from "../ui/useToast";
 import type { Flight } from "../../types";
 
 export interface StandModal {
@@ -11,6 +13,7 @@ export interface StandModal {
 export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandModal) {
     const [type, setType] = useState("GATE");
     const [loading, setLoading] = useState(false);
+    const toast = useToast();
 
     if (!open || !flight) return null;
 
@@ -26,9 +29,10 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
             });
 
             onClose();
-        } catch (err) {
-            alert("Erro ao reservar stand");
+        } catch (err: unknown) {
             console.error(err);
+            const message = axios.isAxiosError(err) && err.response?.status === 404 ? "Nenhum stand disponível do tipo selecionado." : "Erro ao reservar stand";
+            toast.showToast(message, 'error');
         } finally {
             setLoading(false);
         }
@@ -57,7 +61,9 @@ export function StandModal({ open, onClose, flight, onOpenStatusModal }: StandMo
                                 onClose();
                                 onOpenStatusModal(flight);
                             }}
-                            className="w-full px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+                            disabled={!flight.stand}
+                            title={!flight.stand ? "Necessário reservar um stand antes de alterar o status" : undefined}
+                            className={`w-full px-4 py-2 rounded-lg ${!flight.stand ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-yellow-500 text-white hover:bg-yellow-600"}`}
                         >
                             Mudar status do voo
                         </button>

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet } from "react-router-dom"
 import { AirportSidebar } from "../components/main/SideBar";
 import { AirportHeader } from "../components/main/AirportHeader";
 

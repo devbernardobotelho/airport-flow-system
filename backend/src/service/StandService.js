@@ -49,6 +49,17 @@ const StandService = {
         return stand;
     },
 
+    async release(standId) {
+        const stand = await Stand.findByPk(standId);
+
+        if (!stand) throw new Error("Stand não encontrado");
+        if (stand.status !== 'OCCUPIED') throw new Error("Stand já está livre.");
+
+        await stand.update({ status: 'FREE', flightId: null });
+
+        return stand;
+    },
+
     async reallocate(oldStandId, newStandId, flightId) {
         await sequelize.transaction(async (t) => {
 

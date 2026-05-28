@@ -1,75 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Search, Filter, AlertTriangle } from "lucide-react";
-
-interface Flight {
-  id: string;
-  flightNumber: string;
-  airline: string;
-  status: "WAITING" | "APPROACHING" | "LANDED";
-  priority: "NORMAL" | "EMERGENCY";
-  runwaySlot: string | null;
-  stand: string | null;
-  eta: string;
-}
+import api from "../../api";
+import type { Flight } from "../../types";
 
 export function FlightsList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [flights, setFlights] = useState<Flight[]>([]);
 
-  // Mock data
-  const flights: Flight[] = [
-    {
-      id: "F001",
-      flightNumber: "TAM3054",
-      airline: "LATAM",
-      status: "APPROACHING",
-      priority: "NORMAL",
-      runwaySlot: "RW09-14:30",
-      stand: null,
-      eta: "14:30",
-    },
-    {
-      id: "F002",
-      flightNumber: "GLO1234",
-      airline: "GOL",
-      status: "WAITING",
-      priority: "EMERGENCY",
-      runwaySlot: null,
-      stand: null,
-      eta: "14:45",
-    },
-    {
-      id: "F003",
-      flightNumber: "AZU5678",
-      airline: "Azul",
-      status: "LANDED",
-      priority: "NORMAL",
-      runwaySlot: "RW09-13:15",
-      stand: "A12",
-      eta: "13:15",
-    },
-    {
-      id: "F004",
-      flightNumber: "TAP9876",
-      airline: "TAP",
-      status: "APPROACHING",
-      priority: "NORMAL",
-      runwaySlot: "RW09-15:00",
-      stand: "B05",
-      eta: "15:00",
-    },
-    {
-      id: "F005",
-      flightNumber: "AAL456",
-      airline: "American",
-      status: "WAITING",
-      priority: "NORMAL",
-      runwaySlot: null,
-      stand: null,
-      eta: "15:30",
-    },
-  ];
+  useEffect(() => {
+    const loadFlights = async () => {
+      try {
+        const response = await api.get<Flight[]>("/flights");
+        setFlights(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar voos", error);
+      }
+    };
+
+    void loadFlights();
+  }, []);
 
   const getStatusBadge = (status: Flight["status"]) => {
     const configs = {
@@ -81,9 +32,10 @@ export function FlightsList() {
   };
 
   const filteredFlights = flights.filter((flight) => {
+    const airlineName = flight.Airline?.name || "";
     const matchesSearch =
       flight.flightNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      flight.airline.toLowerCase().includes(searchTerm.toLowerCase());
+      airlineName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === "ALL" || flight.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
@@ -175,7 +127,7 @@ export function FlightsList() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
-                    {flight.airline}
+                    {flight.Airline?.name || "—"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
@@ -197,7 +149,9 @@ export function FlightsList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {flight.runwaySlot ? (
-                      <span className="text-sm font-mono">{flight.runwaySlot}</span>
+                      <span className="text-sm font-mono">
+                        {flight.runwaySlot.runwayId} - {new Date(flight.runwaySlot.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     ) : (
                       <span className="text-sm text-muted-foreground">—</span>
                     )}
@@ -205,14 +159,14 @@ export function FlightsList() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {flight.stand ? (
                       <span className="text-sm font-mono bg-muted px-2 py-1 rounded">
-                        {flight.stand}
+                        {flight.stand.id.slice(0, 8).toUpperCase()}
                       </span>
                     ) : (
                       <span className="text-sm text-muted-foreground">—</span>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                    {flight.eta}
+                    {flight.runwaySlot ? new Date(flight.runwaySlot.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
                   </td>
                 </motion.tr>
               );
