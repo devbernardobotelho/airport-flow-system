@@ -59,9 +59,9 @@ async function seedStands() {
         if (flightCount === 0) {
             await Flight.bulkCreate([
                 { airlineId: latam.id, flightNumber: 'TAM101', status: FlightStatus.WAITING },
-                { airlineId: latam.id, flightNumber: 'TAM102', status: FlightStatus.APPROACHING },
+                { airlineId: latam.id, flightNumber: 'TAM102', status: FlightStatus.WAITING },
                 { airlineId: azul.id, flightNumber: 'AZU201', status: FlightStatus.WAITING },
-                { airlineId: azul.id, flightNumber: 'AZU202', status: FlightStatus.APPROACHING }
+                { airlineId: azul.id, flightNumber: 'AZU202', status: FlightStatus.WAITING }
             ]);
         }
     } else if (flightCount === 0) {
