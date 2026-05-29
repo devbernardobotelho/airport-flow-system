@@ -5,7 +5,7 @@ services:
       - "3000:3000"
 
   frontend:
-    build: ./frontend/airport-flow-system
+    build: ./frontend
     ports:
       - "5173:5173"
     depends_on:
