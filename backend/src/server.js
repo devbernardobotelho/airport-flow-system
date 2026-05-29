@@ -34,7 +34,7 @@ const seedStands = require('./seed/seed.js');
 sequelize.sync().then(async () => {
     await seedStands();
 
-    app.listen(3000, () => {
+    app.listen(3000, '0.0.0.0', () => {
         console.log('Servidor rodando e sincronizado!');
     });
 });
